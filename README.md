@@ -5,9 +5,9 @@
 [UnitedKits (Mobile) ~ Coming Soon]()
 
 ## Tugas: 
-[Tugas 7](#Tugas-2) <br>
-[Tugas 8](#Tugas-3) <br>
-[Tugas 9](#Tugas-4) <br>
+[Tugas 7](#Tugas-7) <br>
+[Tugas 8](#Tugas-8) <br>
+[Tugas 9](#Tugas-9) <br>
 
 ---
 
@@ -71,3 +71,25 @@ child: InkWell(
                 content: Text("Kamu telah menekan tombol ${item.name}!")));
         }
 ```
+
+---
+## Tugas 8
+### 1. Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
+Kegunaan sekaligus keuntungan const adalah membuat performa aplikasi lebih optimal. Const sebaiknya digunakan pada stateless widget. Sedangkan hindari const untuk stateful widget.
+
+### 2. Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
+Column : Menyusun widget secara vertikal <br>
+Row : Menyusun widget secara horizontal <br>
+Contoh penggunaan Column: Chapter dalam Novel / Komik <br>
+Contoh penggunaan Row: Icon - Icon pada Navbar
+
+### 3. Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
+Elemen Input yang saya gunakan adalah TextFormField yang digunakan untuk memasukkan teks pada name, amount, dan description. Yang tidak saya gunakan antara lain, DropdownButton, Checkbox, Switch, dll.
+
+### 4. Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
+Saya mengatur tema dengan menggunakan ThemeData pada main.dart.
+
+### 5. Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
+Navigator.pop() untuk menutup form <br>
+Navigator.pushReplacement() untuk untuk halaman saat ini dengan halaman tujuan tanpa menumpuk rute <br>
+Navigator.push() membuka halaman form
