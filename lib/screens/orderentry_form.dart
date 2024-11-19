@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:unitedkits/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:unitedkits/screens/menu.dart';
+import 'dart:convert';
 
 class OrderEntryFormPage extends StatefulWidget {
   const OrderEntryFormPage({super.key});
@@ -12,9 +16,10 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = "";
   String _description = "";
-  int _amount = 0;
+  int _quantity = 0;
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -82,27 +87,27 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: "Amount",
-                    labelText: "Amount",
+                    hintText: "Quantity",
+                    labelText: "Quantity",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
-                      _amount = int.tryParse(value!) ?? 0;
+                      _quantity = int.tryParse(value!) ?? 0;
                     });
                   },
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return "Amount tidak boleh kosong!";
+                      return "Quantity tidak boleh kosong!";
                     }
                     final inputNumber = int.tryParse(value);
                     if (inputNumber == null) {
-                      return "Amount harus berupa angka!";
+                      return "Quantity harus berupa angka!";
                     }
                     if (inputNumber <= 0) {
-                      return "Amount harus angka positif (>0)";
+                      return "Quantity harus angka positif (>0)";
                     }
                     return null;
                   },
@@ -117,35 +122,36 @@ class _OrderEntryFormPageState extends State<OrderEntryFormPage> {
                       backgroundColor: WidgetStateProperty.all(
                           Theme.of(context).colorScheme.primary),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Order berhasil tersimpan'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Name: $_name'),
-                                    Text('Description: $_description'),
-                                    Text('Amount: $_amount')
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _formKey.currentState!.reset();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
+                        // Kirim ke Django dan tunggu respons
+                        final response = await request.postJson(
+                          "http://localhost:8000/create-flutter/",
+                          jsonEncode(<String, String>{
+                            'name': _name,
+                            'quantity': _quantity.toString(),
+                            'description': _description,
+                          }),
                         );
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Order baru berhasil disimpan!"),
+                            ));
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyHomePage()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text(
+                                  "Terdapat kesalahan, silakan coba lagi."),
+                            ));
+                          }
+                        }
                       }
                     },
                     child: const Text(
